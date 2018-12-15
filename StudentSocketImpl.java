@@ -429,7 +429,7 @@ class StudentSocketImpl extends BaseSocketImpl {
             wantsToClose = true;
         }
     //returns immediately to the application
-    /*
+
     if(address==null)
       return;
 
@@ -445,7 +445,7 @@ class StudentSocketImpl extends BaseSocketImpl {
     writer.close();
 
     notifyAll();
-    */
+
     }
 
     /**
@@ -483,10 +483,6 @@ class StudentSocketImpl extends BaseSocketImpl {
             System.out.println("XXX Resending Packet");
             sendPacket((TCPPacket)ref, true);
         }
-    /*
-    // this must run only once the last timer (30 second timer) has expired
-    tcpTimer.cancel();
-    tcpTimer = null;*/
     }
 
     private String stateString(int inState){
@@ -578,10 +574,10 @@ class StudentSocketImpl extends BaseSocketImpl {
     }
 
     private synchronized void incrementCounters(TCPPacket p){
-        System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+        System.out.println("-------------");
         System.out.println(p.seqNum);
         System.out.println(p.ackNum);
-        System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+        System.out.println("-------------");
 
         ackNum = p.seqNum + 1;
 
