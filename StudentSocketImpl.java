@@ -73,14 +73,12 @@ class StudentSocketImpl extends BaseSocketImpl {
         writer.start();
     }
 
-
     /**
     * initialize buffers and set up sequence numbers
     */
     private void initBuffers(){
     	//recvBuffer = new InfiniteBuffer();
     }
-
 
     /**
     * Called by the application-layer code to copy data out of the
@@ -91,11 +89,11 @@ class StudentSocketImpl extends BaseSocketImpl {
     * @return number of bytes copied (by definition > 0)
     */
     synchronized int getData(byte[] buffer, int length){
-        System.out.println("getData()------------");
+        System.out.println("--- Within getData() ---");
         //wait for packet to be received
         int counter = 0;
         byte[] data = null;
-        int temp = 0;
+        int temp =0;
         if(recvBuffer == null){
             try{
                 System.out.print("wait");
@@ -128,7 +126,6 @@ class StudentSocketImpl extends BaseSocketImpl {
         return temp;
     }
 
-
     /**
     * accept data written by application into sendBuffer to send.
     * Must block until ALL data is written.
@@ -136,12 +133,19 @@ class StudentSocketImpl extends BaseSocketImpl {
     * @param length number of bytes to copy
     */
     synchronized void dataFromApp(byte[] buffer, int length){
-        System.out.println("dataFromApp()--------");
-
+        System.out.println("Within dataFromApp()");
+        //instantiate sendBuffer
         sendBuffer = new InfiniteBuffer(length);
-        sendBuffer.append(buffer, 0, length);
+        sendBuffer.append(buffer, 0, length);//this is send buffer
         sendData(length);
-    }
+        /*//Step 2, adding information to sendBuffer
+        byte[] test = new byte[3];
+        test[0] = (byte)'a';
+        test[1] = (byte)'b';
+        test[2] = (byte)'c';
+        sendBuffer.append(test, 0, 3);
+        */
+    }//dataFromApp()
 
     /**
      * Use sendBuffer data and send packets
@@ -231,6 +235,8 @@ class StudentSocketImpl extends BaseSocketImpl {
     	this.notifyAll();
 
         System.out.println("Packet received from address " + p.sourceAddr + " with seqNum " + p.seqNum + " is being processed.");
+
+
 
         //Output Packet Data Test 3
         //Take in packet and store into data. data_noHead is the packet without the headers
@@ -463,11 +469,11 @@ class StudentSocketImpl extends BaseSocketImpl {
             try{
                 wait(1000);
             }
-            catch(InterruptedException e){}
-        }
-        writer.close();
+      catch(InterruptedException e){}
+    }
+    writer.close();
 
-        notifyAll();
+    notifyAll();
     */
     }
 
