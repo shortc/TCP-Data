@@ -457,18 +457,18 @@ class StudentSocketImpl extends BaseSocketImpl {
             //timer task here... try the closing process again
             wantsToClose = true;
         }
-        //returns immediately to the application
-        /*
-        if(address==null)
-            return;
+    //returns immediately to the application
+    /*
+    if(address==null)
+      return;
 
-            terminating = true;
+    terminating = true;
 
-            while(!reader.tryClose()){
-            notifyAll();
-            try{
-                wait(1000);
-            }
+    while(!reader.tryClose()){
+      notifyAll();
+      try{
+    wait(1000);
+      }
       catch(InterruptedException e){}
     }
     writer.close();
@@ -603,10 +603,6 @@ class StudentSocketImpl extends BaseSocketImpl {
                 }
             }
             catch(NoSuchElementException nsee){}
-        }
-
-        if(inPacket.getData() != null){
-            dataFromApp(inPacket.getData(), inPacket.getData().length);
         }
     }
 
