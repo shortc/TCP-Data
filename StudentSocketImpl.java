@@ -115,7 +115,7 @@ class StudentSocketImpl extends BaseSocketImpl {
                 //System.out.println((char)data[i] + ",i: " + i);
                 bufferString += (char)data[i];
                 counter++;
-            }*
+            }*/
             //System.out.println("recvBuffer data: " + bufferString);
             //System.out.println("counter #: " + counter);
             //recvBuffer = null;
