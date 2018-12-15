@@ -110,15 +110,6 @@ class StudentSocketImpl extends BaseSocketImpl {
             recvBuffer.advance(recvBuffer.getBufferSize());
             String bufferString = "";
             data = buffer;
-            /*
-            for(int i = 0; i < length-1 /*&& data[i+1] == (byte)'0'; i++){
-                //System.out.println((char)data[i] + ",i: " + i);
-                bufferString += (char)data[i];
-                counter++;
-            }*/
-            //System.out.println("recvBuffer data: " + bufferString);
-            //System.out.println("counter #: " + counter);
-            //recvBuffer = null;
             System.out.println("buffer.length= "+recvBuffer.getBufferSize());
             temp = recvBuffer.getBufferSize();
             recvBuffer = null;
@@ -138,14 +129,8 @@ class StudentSocketImpl extends BaseSocketImpl {
         sendBuffer = new InfiniteBuffer(length);
         sendBuffer.append(buffer, 0, length);//this is send buffer
         sendData(length);
-        /*//Step 2, adding information to sendBuffer
-        byte[] test = new byte[3];
-        test[0] = (byte)'a';
-        test[1] = (byte)'b';
-        test[2] = (byte)'c';
-        sendBuffer.append(test, 0, 3);
-        */
-    }//dataFromApp()
+    }
+
 
     /**
      * Use sendBuffer data and send packets
@@ -159,14 +144,11 @@ class StudentSocketImpl extends BaseSocketImpl {
         sendBuffer.copyOut(data, sendBuffer.getBase(), length);
         sendBuffer.advance(length);
         String bufferString = "";
-        //System.out.println("data.length: " + data.length);
-
-        //System.out.println("numPacketToSend: " + numPacketToSend);
         int i = 0, j;
         int numSent = 0;
         do{
-            j = 0;byte[] sendData;
-            //System.out.println("numPacketToSend: " + numPacketToSend + "--- numSent: " + numSent + "--- i: " + i);
+            j = 0;
+            byte[] sendData;
 
             if(data.length - numSent*1000 < 1000){
                 sendData = new byte[data.length - numSent*1000];
@@ -178,10 +160,8 @@ class StudentSocketImpl extends BaseSocketImpl {
             for(i = i+(numSent*1000); i < data.length && i < 1000+(1000*numSent); i++){
                     bufferString += (char)data[i];
                     sendData[j] = data[i];
-                    //System.out.print((char)sendData[j]);
                     j++;
                 }
-                //System.out.println("Data to send: " + bufferString);
 
                 TCPPacket ackPacket = new TCPPacket(localport, port, seqNum, ackNum, true, false, false, 1, sendData);
                 incrementCounters(ackPacket);
@@ -202,7 +182,7 @@ class StudentSocketImpl extends BaseSocketImpl {
             System.out.println(bufferString);
             System.out.println("\n /\\/\\/\\End SendData/\\/\\/\\ ");
             */
-    }//sendData()
+    }
 
     /**
     * Connects this socket to the specified port number on the specified host.
@@ -236,8 +216,6 @@ class StudentSocketImpl extends BaseSocketImpl {
 
         System.out.println("Packet received from address " + p.sourceAddr + " with seqNum " + p.seqNum + " is being processed.");
 
-
-
         //Output Packet Data Test 3
         //Take in packet and store into data. data_noHead is the packet without the headers
         //this is where the check for step 4 will go once packets are working
@@ -250,16 +228,9 @@ class StudentSocketImpl extends BaseSocketImpl {
         }
         System.out.println("--Packet data is: " + bufferString);
 
-        //Only add to recvBuffer if data is available. *will need to change to incorporate seqNum and ackNum*
         if(p.getData() != null /*p.seqNum == ackNum*/){
-            //System.out.println("p.getBufferPacket().length : " + (p.getBufferPacket().length - 20));
             recvBuffer = new InfiniteBuffer(p.getBufferPacket().length - 20);
-
-            //System.out.println("data_noHead= "+data_noHead);
-            //System.out.println("p.getBufferPacket().length-20= "+ p.getBufferPacket().length);
             recvBuffer.append(data_noHead, 0, p.getBufferPacket().length-20);
-            //String str = new String(recvBuffer.buffer);
-            //System.out.println("recvBuffer= "+str);//must set recvBuffer to public to view
             this.notifyAll();
         }
 
