@@ -430,21 +430,21 @@ class StudentSocketImpl extends BaseSocketImpl {
         }
     //returns immediately to the application
 
-    if(address==null)
-      return;
-
-    terminating = true;
-
-    while(!reader.tryClose()){
-      notifyAll();
-      try{
-    wait(1000);
-      }
-      catch(InterruptedException e){}
-    }
-    writer.close();
-
-    notifyAll();
+    // if(address==null)
+    //   return;
+    //
+    // terminating = true;
+    //
+    // while(!reader.tryClose()){
+    //   notifyAll();
+    //   try{
+    // wait(1000);
+    //   }
+    //   catch(InterruptedException e){}
+    // }
+    // writer.close();
+    //
+    // notifyAll();
 
     }
 
