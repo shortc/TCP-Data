@@ -180,16 +180,16 @@ class StudentSocketImpl extends BaseSocketImpl {
                 numPacketToSend--;numSent++;i=0;
         }
         while(numPacketToSend > 0);
-            //Step 2, retrieving info from sendBuffer and printing
-            byte[] data = new byte[3];
-            sendBuffer.copyOut(data, 0, 3);
-            String bufferString = "";
-            System.out.println("\\/\\/\\/Send Data\\/\\/\\/");
-            for(int i = 0; i < data.length; i++){
-                bufferString += (char)data[i];
-            }
-            System.out.println(bufferString);
-            System.out.println("\n /\\/\\/\\End SendData/\\/\\/\\ ");
+            // //Step 2, retrieving info from sendBuffer and printing
+            // byte[] data = new byte[3];
+            // sendBuffer.copyOut(data, 0, 3);
+            // String bufferString = "";
+            // System.out.println("\\/\\/\\/Send Data\\/\\/\\/");
+            // for(int i = 0; i < data.length; i++){
+            //     bufferString += (char)data[i];
+            // }
+            // System.out.println(bufferString);
+            // System.out.println("\n /\\/\\/\\End SendData/\\/\\/\\ ");
     }
 
     /**
