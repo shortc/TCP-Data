@@ -110,15 +110,15 @@ class StudentSocketImpl extends BaseSocketImpl {
             recvBuffer.advance(recvBuffer.getBufferSize());
             String bufferString = "";
             data = buffer;
-            /*
-            for(int i = 0; i < length-1 /*&& data[i+1] == (byte)'0'; i++){
-                //System.out.println((char)data[i] + ",i: " + i);
+
+            for(int i = 0; i < length-1 && data[i+1] == (byte)'0'; i++){
+                System.out.println((char)data[i] + ",i: " + i);
                 bufferString += (char)data[i];
                 counter++;
-            }*/
-            //System.out.println("recvBuffer data: " + bufferString);
-            //System.out.println("counter #: " + counter);
-            //recvBuffer = null;
+            }
+            System.out.println("recvBuffer data: " + bufferString);
+            System.out.println("counter #: " + counter);
+            recvBuffer = null;
             System.out.println("buffer.length= "+recvBuffer.getBufferSize());
             temp = recvBuffer.getBufferSize();
             recvBuffer = null;
