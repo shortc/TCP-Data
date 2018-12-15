@@ -110,15 +110,15 @@ class StudentSocketImpl extends BaseSocketImpl {
             recvBuffer.advance(recvBuffer.getBufferSize());
             String bufferString = "";
             data = buffer;
-
-            for(int i = 0; i < length-1 && data[i+1] == (byte)'0'; i++){
-                System.out.println((char)data[i] + ",i: " + i);
+            /*
+            for(int i = 0; i < length-1 /*&& data[i+1] == (byte)'0'; i++){
+                //System.out.println((char)data[i] + ",i: " + i);
                 bufferString += (char)data[i];
                 counter++;
-            }
-            System.out.println("recvBuffer data: " + bufferString);
-            System.out.println("counter #: " + counter);
-            recvBuffer = null;
+            }*
+            //System.out.println("recvBuffer data: " + bufferString);
+            //System.out.println("counter #: " + counter);
+            //recvBuffer = null;
             System.out.println("buffer.length= "+recvBuffer.getBufferSize());
             temp = recvBuffer.getBufferSize();
             recvBuffer = null;
@@ -512,10 +512,10 @@ class StudentSocketImpl extends BaseSocketImpl {
             System.out.println("XXX Resending Packet");
             sendPacket((TCPPacket)ref, true);
         }
-        /*
-        // this must run only once the last timer (30 second timer) has expired
-        tcpTimer.cancel();
-        tcpTimer = null;*/
+    /*
+    // this must run only once the last timer (30 second timer) has expired
+    tcpTimer.cancel();
+    tcpTimer = null;*/
     }
 
     private String stateString(int inState){
@@ -557,7 +557,7 @@ class StudentSocketImpl extends BaseSocketImpl {
     }
 
     private synchronized void changeToState(int newState){
-        System.out.println(stateString(state) + "->" + stateString(newState));
+        System.out.println("!!! " + stateString(state) + "->" + stateString(newState));
         state = newState;
 
         if(newState == CLOSE_WAIT && wantsToClose && !finSent){
@@ -607,10 +607,10 @@ class StudentSocketImpl extends BaseSocketImpl {
     }
 
     private synchronized void incrementCounters(TCPPacket p){
-        System.out.println("---------------");
+        System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
         System.out.println(p.seqNum);
         System.out.println(p.ackNum);
-        System.out.println("---------------");
+        System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
 
         ackNum = p.seqNum + 1;
 
