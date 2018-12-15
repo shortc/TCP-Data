@@ -89,7 +89,7 @@ class StudentSocketImpl extends BaseSocketImpl {
     * @return number of bytes copied (by definition > 0)
     */
     synchronized int getData(byte[] buffer, int length){
-        System.out.println("--- Within getData() ---");
+        System.out.println("Within getData() -------");
         //wait for packet to be received
         int counter = 0;
         byte[] data = null;
@@ -110,7 +110,7 @@ class StudentSocketImpl extends BaseSocketImpl {
             recvBuffer.advance(recvBuffer.getBufferSize());
             String bufferString = "";
             data = buffer;
-            System.out.println("buffer.length= "+recvBuffer.getBufferSize());
+            System.out.println("buffer length = "+recvBuffer.getBufferSize());
             temp = recvBuffer.getBufferSize();
             recvBuffer = null;
         }
@@ -124,7 +124,7 @@ class StudentSocketImpl extends BaseSocketImpl {
     * @param length number of bytes to copy
     */
     synchronized void dataFromApp(byte[] buffer, int length){
-        System.out.println("Within dataFromApp()");
+        System.out.println("Within dataFromApp() -------");
         //instantiate sendBuffer
         sendBuffer = new InfiniteBuffer(length);
         sendBuffer.append(buffer, 0, length);//this is send buffer
@@ -136,7 +136,7 @@ class StudentSocketImpl extends BaseSocketImpl {
      * Use sendBuffer data and send packets
      */
     private void sendData(int length){
-        System.out.println("Within sendData()");
+        System.out.println("Within sendData() -----------");
         double numPacketToSend = 0;
         byte[] data = new byte[length];
 
@@ -171,17 +171,15 @@ class StudentSocketImpl extends BaseSocketImpl {
         }
         while(numPacketToSend > 0);
             //Step 2, retrieving info from sendBuffer and printing
-            /*
-            byte[] data = new byte[3];
-            sendBuffer.copyOut(data, 0, 3);
-            String bufferString = "";
-            System.out.println("\\/\\/\\/Send Data\\/\\/\\/");
-            for(int i = 0; i < data.length; i++){
-                bufferString += (char)data[i];
-            }
-            System.out.println(bufferString);
-            System.out.println("\n /\\/\\/\\End SendData/\\/\\/\\ ");
-            */
+            // byte[] data = new byte[3];
+            // sendBuffer.copyOut(data, 0, 3);
+            // String bufferString = "";
+            // System.out.println("\\/\\/\\/Send Data\\/\\/\\/");
+            // for(int i = 0; i < data.length; i++){
+            //     bufferString += (char)data[i];
+            // }
+            // System.out.println(bufferString);
+            // System.out.println("\n /\\/\\/\\End SendData/\\/\\/\\ ");
     }
 
     /**
@@ -226,7 +224,7 @@ class StudentSocketImpl extends BaseSocketImpl {
             bufferString += (char)data[i];
             data_noHead[i-20] = data[i];
         }
-        System.out.println("--Packet data is: " + bufferString);
+        System.out.println("--Packet data is:\n" + bufferString);
 
         if(p.getData() != null /*p.seqNum == ackNum*/){
             recvBuffer = new InfiniteBuffer(p.getBufferPacket().length - 20);
@@ -430,21 +428,21 @@ class StudentSocketImpl extends BaseSocketImpl {
         }
     //returns immediately to the application
 
-    if(address==null)
-      return;
-
-    terminating = true;
-
-    while(!reader.tryClose()){
-      notifyAll();
-      try{
-    wait(1000);
-      }
-      catch(InterruptedException e){}
-    }
-    writer.close();
-
-    notifyAll();
+    // if(address==null)
+    //   return;
+    //
+    // terminating = true;
+    //
+    // while(!reader.tryClose()){
+    //   notifyAll();
+    //   try{
+    // wait(1000);
+    //   }
+    //   catch(InterruptedException e){}
+    // }
+    // writer.close();
+    //
+    // notifyAll();
 
     }
 
@@ -524,7 +522,7 @@ class StudentSocketImpl extends BaseSocketImpl {
     }
 
     private synchronized void changeToState(int newState){
-        System.out.println("!!! " + stateString(state) + "->" + stateString(newState));
+        System.out.println(stateString(state) + "->" + stateString(newState));
         state = newState;
 
         if(newState == CLOSE_WAIT && wantsToClose && !finSent){
