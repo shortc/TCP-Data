@@ -78,7 +78,7 @@ class StudentSocketImpl extends BaseSocketImpl {
     * initialize buffers and set up sequence numbers
     */
     private void initBuffers(){
-        //done elsewhere
+    	//recvBuffer = new InfiniteBuffer();
     }
 
 
@@ -113,14 +113,14 @@ class StudentSocketImpl extends BaseSocketImpl {
             String bufferString = "";
             data = buffer;
 
-            // for(int i = 0; i < length-1 && data[i+1] == (byte)'0'; i++){
-            //     System.out.println((char)data[i] + ",i: " + i);
-            //     bufferString += (char)data[i];
-            //     counter++;
-            // }
-            // System.out.println("recvBuffer data: " + bufferString);
-            // System.out.println("counter #: " + counter);
-            // recvBuffer = null;
+            for(int i = 0; i < length-1 && data[i+1] == (byte)'0'; i++){
+                System.out.println((char)data[i] + ",i: " + i);
+                bufferString += (char)data[i];
+                counter++;
+            }
+            System.out.println("recvBuffer data: " + bufferString);
+            System.out.println("counter #: " + counter);
+            recvBuffer = null;
             System.out.println("buffer.length= "+recvBuffer.getBufferSize());
             temp = recvBuffer.getBufferSize();
             recvBuffer = null;
@@ -147,18 +147,22 @@ class StudentSocketImpl extends BaseSocketImpl {
      * Use sendBuffer data and send packets
      */
     private void sendData(int length){
-        System.out.println("sendData()--------");
+        System.out.println("Within sendData()");
         double numPacketToSend = 0;
         byte[] data = new byte[length];
+
+
         sendBuffer.copyOut(data, sendBuffer.getBase(), length);
         sendBuffer.advance(length);
         String bufferString = "";
+        //System.out.println("data.length: " + data.length);
+
+        //System.out.println("numPacketToSend: " + numPacketToSend);
         int i = 0, j;
         int numSent = 0;
-
         do{
-            j = 0;
-            byte[] sendData;
+            j = 0;byte[] sendData;
+            //System.out.println("numPacketToSend: " + numPacketToSend + "--- numSent: " + numSent + "--- i: " + i);
 
             if(data.length - numSent*1000 < 1000){
                 sendData = new byte[data.length - numSent*1000];
@@ -170,8 +174,10 @@ class StudentSocketImpl extends BaseSocketImpl {
             for(i = i+(numSent*1000); i < data.length && i < 1000+(1000*numSent); i++){
                     bufferString += (char)data[i];
                     sendData[j] = data[i];
+                    //System.out.print((char)sendData[j]);
                     j++;
                 }
+                //System.out.println("Data to send: " + bufferString);
 
                 TCPPacket ackPacket = new TCPPacket(localport, port, seqNum, ackNum, true, false, false, 1, sendData);
                 incrementCounters(ackPacket);
@@ -180,17 +186,19 @@ class StudentSocketImpl extends BaseSocketImpl {
                 numPacketToSend--;numSent++;i=0;
         }
         while(numPacketToSend > 0);
-            // //Step 2, retrieving info from sendBuffer and printing
-            // byte[] data = new byte[3];
-            // sendBuffer.copyOut(data, 0, 3);
-            // String bufferString = "";
-            // System.out.println("\\/\\/\\/Send Data\\/\\/\\/");
-            // for(int i = 0; i < data.length; i++){
-            //     bufferString += (char)data[i];
-            // }
-            // System.out.println(bufferString);
-            // System.out.println("\n /\\/\\/\\End SendData/\\/\\/\\ ");
-    }
+            //Step 2, retrieving info from sendBuffer and printing
+            /*
+            byte[] data = new byte[3];
+            sendBuffer.copyOut(data, 0, 3);
+            String bufferString = "";
+            System.out.println("\\/\\/\\/Send Data\\/\\/\\/");
+            for(int i = 0; i < data.length; i++){
+                bufferString += (char)data[i];
+            }
+            System.out.println(bufferString);
+            System.out.println("\n /\\/\\/\\End SendData/\\/\\/\\ ");
+            */
+    }//sendData()
 
     /**
     * Connects this socket to the specified port number on the specified host.
@@ -224,6 +232,9 @@ class StudentSocketImpl extends BaseSocketImpl {
 
         System.out.println("Packet received from address " + p.sourceAddr + " with seqNum " + p.seqNum + " is being processed.");
 
+        //Output Packet Data Test 3
+        //Take in packet and store into data. data_noHead is the packet without the headers
+        //this is where the check for step 4 will go once packets are working
         String bufferString = "";
         byte[] data = p.getBufferPacket();
         byte[] data_noHead = new byte[data.length-20];
@@ -231,14 +242,21 @@ class StudentSocketImpl extends BaseSocketImpl {
             bufferString += (char)data[i];
             data_noHead[i-20] = data[i];
         }
+        System.out.println("--Packet data is: " + bufferString);
 
-        System.out.println("Packet data is: " + bufferString);
-
-        if(p.getData() != null && p.seqNum == ackNum){
+        //Only add to recvBuffer if data is available. *will need to change to incorporate seqNum and ackNum*
+        if(p.getData() != null /*p.seqNum == ackNum*/){
+            //System.out.println("p.getBufferPacket().length : " + (p.getBufferPacket().length - 20));
             recvBuffer = new InfiniteBuffer(p.getBufferPacket().length - 20);
+
+            //System.out.println("data_noHead= "+data_noHead);
+            //System.out.println("p.getBufferPacket().length-20= "+ p.getBufferPacket().length);
             recvBuffer.append(data_noHead, 0, p.getBufferPacket().length-20);
+            //String str = new String(recvBuffer.buffer);
+            //System.out.println("recvBuffer= "+str);//must set recvBuffer to public to view
             this.notifyAll();
         }
+
 
         System.out.print("The packet is ");
         if(p.ackFlag == true && p.synFlag == true){
@@ -414,22 +432,6 @@ class StudentSocketImpl extends BaseSocketImpl {
     public synchronized void close() throws IOException {
         System.out.println("*** close() was called by the application.");
 
-        if(address==null)
-            return;
-
-            terminating = true;
-
-            while(!reader.tryClose()){
-            notifyAll();
-            try{
-                wait(1000);
-            }
-            catch(InterruptedException e){}
-        }
-        writer.close();
-
-        notifyAll();
-
         if(state == ESTABLISHED){
             //client state
             TCPPacket finPacket = new TCPPacket(localport, port, seqNum, ackNum, false, false, true, 1, null);
@@ -450,22 +452,23 @@ class StudentSocketImpl extends BaseSocketImpl {
             wantsToClose = true;
         }
         //returns immediately to the application
+        /*
+        if(address==null)
+            return;
 
-        // if(address==null)
-        //     return;
-        //
-        //     terminating = true;
-        //
-        //     while(!reader.tryClose()){
-        //     notifyAll();
-        //     try{
-        //         wait(1000);
-        //     }
-        //     catch(InterruptedException e){}
-        // }
-        // writer.close();
-        //
-        // notifyAll();
+            terminating = true;
+
+            while(!reader.tryClose()){
+            notifyAll();
+            try{
+                wait(1000);
+            }
+            catch(InterruptedException e){}
+        }
+        writer.close();
+
+        notifyAll();
+    */
     }
 
     /**
